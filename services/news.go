@@ -18,7 +18,7 @@ func extractNews(doc *goquery.Document) models.News {
 	news := models.News{
 		Reporter: strings.TrimSpace(parts[0]),
 		Date:     strings.TrimSpace(parts[1]),
-		Title:    strings.TrimSpace(doc.Find("div.pt-3.mx-3.detail_title hi").Text()),
+		Title:    strings.TrimSpace(doc.Find("div.pt-3.mx-3.detail_title h1").Text()),
 		Content:  strings.TrimSpace(doc.Find("div.pb-3.mx-3.detail_content").Text()),
 	}
 
