@@ -1,16 +1,14 @@
 package services
 
 import (
-	"expense-manager-backend/constants"
 	"expense-manager-backend/models"
 	"expense-manager-backend/utils"
-	"fmt"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
 )
 
-func extractEnNews(doc *goquery.Document) models.News {
+func extractEnglishNews(doc *goquery.Document) models.News {
 	var paragraphs string
 	newsDoc := doc.Find("div.bg-white.p-4.col-span-5")
 
@@ -27,7 +25,7 @@ func extractEnNews(doc *goquery.Document) models.News {
 	return news
 }
 
-func extractTwNews(doc *goquery.Document) models.News {
+func extractTraditionalChineseNews(doc *goquery.Document) models.News {
 	head := strings.TrimSpace(doc.Find("div.col-md-8.col-12 p").Text())
 	parts := strings.Split(head, "報導")
 
@@ -41,13 +39,11 @@ func extractTwNews(doc *goquery.Document) models.News {
 	return news
 }
 
-func FetchAndExtractNews(language string, idStr string) (models.News, error) {
+func FetchAndExtractNews(language string, newsId string) (models.News, error) {
 	var news models.News
-	var url string
-	if language == "en_US" {
-		url = fmt.Sprintf("%s/news/%s", constants.EnDomain, idStr)
-	} else {
-		url = fmt.Sprintf("%s/news/detail.php?%s", constants.ZhDomain, idStr)
+	url, err := constructURL(language, &newsId)
+	if err != nil {
+		return news, err
 	}
 
 	doc, err := utils.FetchHTMLContent(url)
@@ -56,11 +52,11 @@ func FetchAndExtractNews(language string, idStr string) (models.News, error) {
 	}
 
 	if language == "en_US" {
-		news = extractEnNews(doc)
-		news.Id = idStr
+		news = extractEnglishNews(doc)
+		news.Id = newsId
 	} else {
-		news = extractTwNews(doc)
-		news.Id = idStr
+		news = extractTraditionalChineseNews(doc)
+		news.Id = newsId
 	}
 
 	return news, nil
