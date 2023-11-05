@@ -2,16 +2,15 @@ package handlers
 
 import (
 	"encoding/json"
-	"expense-manager-backend/constants"
 	"expense-manager-backend/services"
-	"fmt"
 	"net/http"
 )
 
 func NewsListHandler(w http.ResponseWriter, r *http.Request) {
-	url := fmt.Sprintf("%s/news/list.php?nt_pk=7", constants.Domain)
+	keys := r.URL.Query()
+	languageStr := keys.Get("language")
 
-	newsList, err := services.FetchAndExtractNewsList(url)
+	newsList, err := services.FetchAndExtractNewsList(languageStr)
 	if err != nil {
 		http.Error(w, "Failed to fetch news list", http.StatusInternalServerError)
 		return

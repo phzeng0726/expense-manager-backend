@@ -11,7 +11,24 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
-func extractNews(doc *goquery.Document) models.News {
+func extractEnNews(doc *goquery.Document) models.News {
+	var paragraphs string
+	newsDoc := doc.Find("div.bg-white.p-4.col-span-5")
+
+	newsDoc.Find("p").Each(func(i int, s *goquery.Selection) {
+		paragraphs += s.Text()
+	})
+
+	news := models.News{
+		Date:    strings.TrimSpace(newsDoc.Find("h3 span").Text()),
+		Title:   strings.TrimSpace(newsDoc.Find(".news_title").Text()),
+		Content: paragraphs,
+	}
+
+	return news
+}
+
+func extractTwNews(doc *goquery.Document) models.News {
 	head := strings.TrimSpace(doc.Find("div.col-md-8.col-12 p").Text())
 	parts := strings.Split(head, "報導")
 
@@ -25,17 +42,29 @@ func extractNews(doc *goquery.Document) models.News {
 	return news
 }
 
-func FetchAndExtractNews(idStr string) (models.News, error) {
-	url := fmt.Sprintf("%s/news/detail.php?%s", constants.Domain, idStr)
+func FetchAndExtractNews(language string, idStr string) (models.News, error) {
+	var news models.News
+	var url string
+	if language == "en_US" {
+		url = fmt.Sprintf("%s/news/2023A31W08EA", constants.EnDomain)
+	} else {
+		url = fmt.Sprintf("%s/news/detail.php?%s", constants.ZhDomain, idStr)
+	}
 
 	doc, err := utils.FetchHTMLContent(url)
 	if err != nil {
-		return models.News{}, err
+		return news, err
 	}
 
-	news := extractNews(doc)
-	id, _ := strconv.Atoi(idStr)
-	news.Id = id
+	if language == "en_US" {
+		news = extractEnNews(doc)
+		id, _ := strconv.Atoi(idStr)
+		news.Id = id
+	} else {
+		news = extractTwNews(doc)
+		id, _ := strconv.Atoi(idStr)
+		news.Id = id
+	}
 
 	return news, nil
 }
