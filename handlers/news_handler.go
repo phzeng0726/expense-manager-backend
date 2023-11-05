@@ -9,8 +9,9 @@ import (
 func NewsHandler(w http.ResponseWriter, r *http.Request) {
 	keys := r.URL.Query()
 	idStr := keys.Get("id")
+	languageStr := keys.Get("language")
 
-	news, err := services.FetchAndExtractNews(idStr)
+	news, err := services.FetchAndExtractNews(languageStr, idStr)
 	if err != nil {
 		http.Error(w, "Failed to fetch news details", http.StatusInternalServerError)
 		return
