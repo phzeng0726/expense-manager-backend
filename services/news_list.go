@@ -1,17 +1,15 @@
 package services
 
 import (
-	"expense-manager-backend/constants"
 	"expense-manager-backend/models"
 	"expense-manager-backend/utils"
-	"fmt"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
 )
 
-func extractEnNewsList(doc *goquery.Document) []models.News {
-	var newsList []models.News
+func extractAllEnglishNews(doc *goquery.Document) []models.News {
+	var extractedNewsList []models.News
 	newsItems := doc.Find("div.mt-4.mx-4.mb-12.cursor-pointer.border-b.border-solid.border-slate-200.transition.duration-150.ease-in")
 
 	newsItems.Each(func(i int, newsItem *goquery.Selection) {
@@ -25,22 +23,17 @@ func extractEnNewsList(doc *goquery.Document) []models.News {
 			Date:  date,
 			Id:    id,
 		}
-		newsList = append(newsList, news)
-
+		extractedNewsList = append(extractedNewsList, news)
 	})
 
-	return newsList
+	return extractedNewsList
 }
 
-func extractTwNewsList(doc *goquery.Document) []models.News {
-	var newsList []models.News
-
-	temp := doc.Find("div.md:col-span-2")
+func extractAllTraditionalChineseNews(doc *goquery.Document) []models.News {
+	var extractedNewsList []models.News
 
 	newsItems := doc.Find("div.index-content-left.col0 div.cardshap.redius_bg div.news_list")
 	newsItems.Each(func(_ int, newsItem *goquery.Selection) {
-		fmt.Println(temp) // 使用 %+v 來印出詳細信息
-
 		title, _ := newsItem.Find("h3 a").Attr("title")
 		link, _ := newsItem.Find("h3 a").Attr("href")
 		date := strings.Trim(newsItem.Find(".fb_search_btn small").Text(), "()")
@@ -51,33 +44,30 @@ func extractTwNewsList(doc *goquery.Document) []models.News {
 			Date:  date,
 			Id:    id,
 		}
-		newsList = append(newsList, news)
+		extractedNewsList = append(extractedNewsList, news)
 	})
 
-	return newsList
+	return extractedNewsList
 }
 
 func FetchAndExtractNewsList(language string) ([]models.News, error) {
-	var newsList []models.News
-	var url string
+	var extractedNewsList []models.News
 
-	if language == "en_US" {
-		url = fmt.Sprintf("%s/tag/FIN/1", constants.EnDomain)
-	} else {
-		url = fmt.Sprintf("%s/news/list.php?nt_pk=7", constants.ZhDomain)
+	url, err := constructURL(language, nil)
+	if err != nil {
+		return extractedNewsList, err
 	}
 
 	doc, err := utils.FetchHTMLContent(url)
 	if err != nil {
-		return newsList, err
+		return extractedNewsList, err
 	}
 
 	if language == "en_US" {
-		newsList = extractEnNewsList(doc)
+		extractedNewsList = extractAllEnglishNews(doc)
 	} else {
-		newsList = extractTwNewsList(doc)
-
+		extractedNewsList = extractAllTraditionalChineseNews(doc)
 	}
 
-	return newsList, nil
+	return extractedNewsList, nil
 }
