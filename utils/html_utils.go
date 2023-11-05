@@ -25,6 +25,7 @@ func FetchHTMLContent(url string) (*goquery.Document, error) {
 	if response.StatusCode == 403 {
 		return nil, errors.New("fetch news error")
 	}
+
 	doc, err := goquery.NewDocumentFromReader(response.Body)
 	if err != nil {
 		return nil, err
