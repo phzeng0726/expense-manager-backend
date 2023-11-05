@@ -5,7 +5,6 @@ import (
 	"expense-manager-backend/models"
 	"expense-manager-backend/utils"
 	"fmt"
-	"strconv"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
@@ -46,7 +45,7 @@ func FetchAndExtractNews(language string, idStr string) (models.News, error) {
 	var news models.News
 	var url string
 	if language == "en_US" {
-		url = fmt.Sprintf("%s/news/2023A31W08EA", constants.EnDomain)
+		url = fmt.Sprintf("%s/news/%s", constants.EnDomain, idStr)
 	} else {
 		url = fmt.Sprintf("%s/news/detail.php?%s", constants.ZhDomain, idStr)
 	}
@@ -58,12 +57,10 @@ func FetchAndExtractNews(language string, idStr string) (models.News, error) {
 
 	if language == "en_US" {
 		news = extractEnNews(doc)
-		id, _ := strconv.Atoi(idStr)
-		news.Id = id
+		news.Id = idStr
 	} else {
 		news = extractTwNews(doc)
-		id, _ := strconv.Atoi(idStr)
-		news.Id = id
+		news.Id = idStr
 	}
 
 	return news, nil

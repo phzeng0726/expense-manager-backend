@@ -5,7 +5,6 @@ import (
 	"expense-manager-backend/models"
 	"expense-manager-backend/utils"
 	"fmt"
-	"strconv"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
@@ -13,27 +12,23 @@ import (
 
 func extractEnNewsList(doc *goquery.Document) []models.News {
 	var newsList []models.News
+	newsItems := doc.Find("div.mt-4.mx-4.mb-12.cursor-pointer.border-b.border-solid.border-slate-200.transition.duration-150.ease-in")
 
-	title := doc.Find(".news_title_col").Text()
+	newsItems.Each(func(i int, newsItem *goquery.Selection) {
+		title := strings.TrimSpace(newsItem.Find(".news_title_col").Text())
+		link, _ := newsItem.Find("a").Attr("href")
+		date := newsItem.Find("h4").Text()
+		id := strings.Split(link, "news/")[1]
 
-	// newsItems.Each(func(i int, s *goquery.Selection) {
-	// 	fmt.Println(s.Text())
-	// })
-	// newsItems.Each(func(_ int, newsItem *goquery.Selection) {
+		news := models.News{
+			Title: title,
+			Date:  date,
+			Id:    id,
+		}
+		newsList = append(newsList, news)
 
-	// 	title := newsItem.Text()
-	// 	// link, _ := newsItem.Find("h3 a").Attr("href")
-	// 	// date := strings.Trim(newsItem.Find(".fb_search_btn small").Text(), "()")
-	// 	// id, _ := strconv.Atoi(strings.Split(link, "?")[1])
-	// 	fmt.Println(title)
+	})
 
-	// })
-	news := models.News{
-		Title: title,
-		// Date:  date,
-		// Id:    id,
-	}
-	newsList = append(newsList, news)
 	return newsList
 }
 
@@ -49,7 +44,7 @@ func extractTwNewsList(doc *goquery.Document) []models.News {
 		title, _ := newsItem.Find("h3 a").Attr("title")
 		link, _ := newsItem.Find("h3 a").Attr("href")
 		date := strings.Trim(newsItem.Find(".fb_search_btn small").Text(), "()")
-		id, _ := strconv.Atoi(strings.Split(link, "?")[1])
+		id := strings.Split(link, "?")[1]
 
 		news := models.News{
 			Title: title,
