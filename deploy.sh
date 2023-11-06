@@ -14,6 +14,10 @@ gcloud run deploy $CLOUD_RUN_SERVICE \
 # NOTE: 登入
 # gcloud auth login
 
-# NOTE: /r問題
+# NOTE: /r問題，如果sh檔跑過但還是不成功，.env檔也跑一次
 # https://blog.csdn.net/Biany0h0/article/details/111160764
 # sed -i 's/\r//' deploy.sh
+
+# /r問題方法二
+# https://eternalcenter.com/debug-bash-r-command-not-found/
+# dos2unix deploy.sh
