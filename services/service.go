@@ -38,20 +38,3 @@ func constructURL(language string, newsId *string) (string, error) {
 
 	return "", errors.New("language not available")
 }
-
-// func constructURL(language string, newsId *string) string {
-// 	if language == "en_US" {
-// 		if newsId == nil {
-// 			return fmt.Sprintf("%s/tag/FIN/1", constants.EnDomain)
-// 		} else {
-// 			return fmt.Sprintf("%s/news/%s", constants.EnDomain, *newsId)
-// 		}
-// 	} else {
-// 		if newsId == nil {
-// 			return fmt.Sprintf("%s/news/list.php?nt_pk=7", constants.ZhDomain)
-// 		} else {
-// 			return fmt.Sprintf("%s/news/detail.php?%s", constants.ZhDomain, *newsId)
-// 		}
-
-// 	}
-// }
