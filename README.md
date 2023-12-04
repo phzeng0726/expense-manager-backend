@@ -19,16 +19,30 @@
 
 ## DEMO 影片
 
-[![cover](https://github.com/YJZeng1120/expense_manager_demo/assets/84773273/83ef1951-94d4-432d-9fd6-bfef7c31dd51)](https://youtu.be/l09rLSNswLE?si=V_BFdcdJswus8yae&t=155)
+[![cover](https://github.com/YJZeng1120/expense_manager_demo/assets/84773273/83ef1951-94d4-432d-9fd6-bfef7c31dd51)](https://www.youtube.com/watch?v=V1HvQEdIZ74)
 
-## 使用工具
+## 技術清單
 
-- **Golang**
+### Language
 
-  - goquery - 網頁爬蟲
-  - net - 提供前端工程師爬取及時新聞資料的 RESTful APIs
+- **Golang** `v1.20` |
 
-- **Tools**
-  - Docker
-  - GCP Cloud Run - 將容器化應用程式佈署至雲端
-  - Git - 版本控制
+  - **Main Dependencies**
+
+    - Goquery (`github.com/PuerkitoBio/goquery` v1.8.1)
+    - Net (`golang.org/x/net` v0.14.0) - 提供前端工程師爬取及時新聞資料的 RESTful APIs
+
+  - **All Dependencies**
+
+    ![All dependencies in backend system](screenshots/dependencies.png)
+
+### Cloud Services
+
+- **Server**
+  - Google Cloud Run
+
+### Other Tools
+
+- **Git** (Version control)
+- **Docker** (Container)
+- **Postman** (API tool)
